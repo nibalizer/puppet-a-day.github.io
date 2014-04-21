@@ -64,5 +64,5 @@ STATIC_PATHS = [
 ]
 
 EXTRA_PATH_METADATA = {
-    'extra/CNAME.txt': {'path':'CNAME.txt'},
+    'extra/CNAME': {'path':'CNAME'},
 }
