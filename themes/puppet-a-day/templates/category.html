@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import post %}
+{% block content %}
+<h1 class="content-subhead">Category: {{category}}</h1>
+<div class="posts">
+  {% for article in articles %}
+  {{ post(article, summary=true, show_gravatar=false) }}
+  {% endfor %}
+</div>
+{% endblock content %}

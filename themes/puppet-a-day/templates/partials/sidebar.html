@@ -1,0 +1,23 @@
+<div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    <hgroup>
+      <h1 class="brand-title"><a href="/">{{SITENAME}}</a></h1>
+      <h2 class="brand-tagline">{{SITESUBTITLE}}</h2>
+    </hgroup>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        {% for item in MENUITEMS %}
+        <li class="nav-item">
+          <a class="pure-button" href="{{SITEURL}}/{{item[1]}}">{{item[0]}}</a>
+        </li>
+        {% endfor %}
+        {% if GITHUB_URL %}
+        <li class="nav-item">
+          <a class="pure-button" href="{{GITHUB_URL}}"><i class="fa fa-github"></i> Github</a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+</div>

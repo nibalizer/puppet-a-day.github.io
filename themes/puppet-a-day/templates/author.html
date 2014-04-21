@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import post %}
+{% block content %}
+<header class="author-header">
+    <img class="author-avatar" alt="{{author}}" src="{{articles[0].author_gravatar}}" width="48px" height="48px">
+  <h2 class="content-subhead">Author: {{author}}</h2>
+</header>
+<div class="posts">
+  {% for article in articles %}
+  {{ post(article, summary=true, show_gravatar=false) }}
+  {% endfor %}
+</div>
+{% endblock content %}

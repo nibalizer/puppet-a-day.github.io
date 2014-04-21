@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="content-subhead">Authors</h2>
+<ul>
+{% for author, _ in authors|sort %}
+<li><a href="{{SITEURL}}/{{author.url}}">{{author}}</a></li>
+{% endfor %}
+</ul>
+{% endblock content %}
