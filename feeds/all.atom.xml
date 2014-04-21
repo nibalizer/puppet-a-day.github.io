@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Puppet a day</title><link href="http://puppet-a-day.com/" rel="alternate"></link><link href="http://puppet-a-day.com/feeds/all.atom.xml" rel="self"></link><id>http://puppet-a-day.com/</id><updated>2014-04-21T00:00:00+00:00</updated><entry><title>Introducing Puppet-a-day</title><link href="http://puppet-a-day.com/blog/2014/04/21/introducing-puppet-a-day/" rel="alternate"></link><updated>2014-04-21T00:00:00+00:00</updated><author><name>Daenney</name></author><id>tag:puppet-a-day.com,2014-04-21:blog/2014/04/21/introducing-puppet-a-day/</id><summary type="html">&lt;p&gt;Welcome to &amp;#8220;Puppet a day&amp;#8221;. The idea of this blog is to become a collection of
+community crowdsourced content about Puppet. You can publish your own content
+instead of needing to host a blog yourself, repost it here or simply link to
+an article on another blog or&amp;nbsp;site.&lt;/p&gt;
+&lt;p&gt;The blog is run as an opensource project and is hosted on Github. You can
+fork the project, create a &lt;span class="caps"&gt;PR&lt;/span&gt; against the &lt;code&gt;source&lt;/code&gt; branch and if it passes
+review it will get merged and&amp;nbsp;published.&lt;/p&gt;
+&lt;p&gt;We&amp;#8217;re by no means done working on this but it&amp;#8217;s &amp;#8220;good enough&amp;#8221; for release right
+now. The theme is a heavily modified version of the Pure Pelican theme and
+although better structured still messy in a bunch of places. There&amp;#8217;s no auto-
+deploy yet either for when &lt;span class="caps"&gt;PR&lt;/span&gt;&amp;#8217;s get merged but we&amp;#8217;re working on adding&amp;nbsp;that.&lt;/p&gt;
+&lt;p&gt;Looking forward to all your &lt;span class="caps"&gt;PR&lt;/span&gt;&amp;#8217;s!&lt;/p&gt;</summary></entry></feed>
