@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta property="og:site_name" content="Puppet a day">
+    <meta name="twitter:card" content="summary">
+    <meta property="og:type" content="article"/>
+    <meta property="og:title" content="Modern testing of modules">
+    <meta property="og:url" content="http://puppet-a-day.com/blog/2014/04/22/modern-testing-of-modules/">
+    <meta property="og:description" content="Modern testing in Puppet">
+    <meta property="article:published_time" content="2014-04-22">
+    <meta name="twitter:title" content="Modern testing of modules">
+    <meta name="twitter:description" content="Modern testing in Puppet">
+    <meta property="article:section" content="blog">
+    <meta property="article:author" content="Ashley Penney">
+    <meta name="twitter:creator" content="@ashleypenney">
+
+    <title>Puppet a day</title>
+
+    <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.5.0-rc-1/pure-min.css">
+    <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.5.0-rc-1/grids-responsive-min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <!--[if lt IE 9]>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="http://puppet-a-day.com/theme/css//puppet-a-day.css">
+  </head>
+  <body>
+    <div id="layout" class="pure-g">
+<div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    <hgroup>
+      <h1 class="brand-title"><a href="/">Puppet a day</a></h1>
+      <h2 class="brand-tagline">crowdsourced community blog</h2>
+    </hgroup>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/archives">Archives</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/authors">Authors</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/categories">Categories</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/tags">Tags</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="https://github.com/puppet-a-day/puppet-a-day.github.io"><i class="fa fa-github"></i> Github</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>      <div class="content pure-u-1 pure-u-md-3-4">
+        <div>
+
+<div class="posts">
+  <article class="post h-entry">
+  <header class="article-header">
+    <img class="article-avatar" alt="Ashley Penney" src="http://www.gravatar.com/avatar/e32d794b67bf5f5f0b95d391a95f6d4f" height="56px" width="56px">
+    <h2 class="post-title">Modern testing of&nbsp;modules</h2>
+    <div class="post-meta h-card">
+      By <span class="p-name"><a class="u-url" href="/author/ashley-penney">
+          Ashley Penney</a></span>
+      in <a href="/category/blog"
+        class="post-category post-category-blog">
+        blog</a>
+      on <time class="dt-published" datetime="2014-04-22T00:00:00">Tue 22 April 2014</time>
+    </div>
+  </header>
+  <div class="e-content ">
+    <p>At Puppet Labs, we&#8217;ve been busy over the last few months, working on overhauling our
+public modules to treat them as distinct pieces of software rather than less tested&nbsp;one-offs.</p>
+<p>A huge part of the overhaul has centered on testing the modules properly, and today
+I want to give a quick overview to the current, state of the art testing available for&nbsp;modules.</p>
+<h2 id="rspec-puppet">rspec-puppet</h2>
+<p>Rspec-puppet has been around for a long time now.  Until recently, it was the
+only testing choice out there and was used fairly heavily for Puppet Labs
+modules.  Written by Tim Sharpe, rspec-puppet allows you to build catalogs in
+rspec and then verify that various resources appear, along with what their properties
+may be.  For a very simple example of this we can look at the ntp&nbsp;module.</p>
+<p>In ntp, we start with a describe block, which is a standard part of
+(rspec)[http://rspec.info/] and acts as a kind of container for all the stuff
+relating to specific tests.  We give it the name of the class we&#8217;re testing.
+We then create more describe blocks to allow us to explain very specifically
+what we&#8217;re going to be&nbsp;testing.</p>
+<p>After that, we use <code>let</code> to create a params variable, which contains the
+parameters we&#8217;re passing into the ntp class.  We have to declare this as a
+hash of&nbsp;parameters.</p>
+<div class="highlight"><pre><span class="n">describe</span> <span class="s1">&#39;ntp&#39;</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="s2">&quot;keys for osfamily </span><span class="si">#{</span><span class="nb">system</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">do</span>
+    <span class="n">describe</span> <span class="s2">&quot;when enabled&quot;</span> <span class="k">do</span>
+      <span class="n">let</span><span class="p">(</span><span class="ss">:params</span><span class="p">)</span> <span class="k">do</span>
+        <span class="p">{</span>
+          <span class="ss">:keys_enable</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span>
+          <span class="ss">:keys_file</span> <span class="o">=&gt;</span> <span class="s1">&#39;/etc/ntp/ntp.keys&#39;</span><span class="p">,</span>
+          <span class="ss">:keys_trusted</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="o">]</span><span class="p">,</span>
+          <span class="ss">:keys_controlkey</span> <span class="o">=&gt;</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span>
+          <span class="ss">:keys_requestkey</span> <span class="o">=&gt;</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+      <span class="k">end</span>
+</pre></div>
+
+
+<p>Next, we create several <code>it</code> blocks, which contain the actual tests.  Here
+we&#8217;re stating that it should contain a <code>file{}</code> resource with the title of
+<code>/etc/ntp</code>, and that that it should have various properties.  For the content
+checks, we use a regular expression to look within the rendered template
+for&nbsp;ntp.conf.</p>
+<div class="highlight"><pre>      <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">contain_file</span><span class="p">(</span><span class="s1">&#39;/etc/ntp&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">({</span>
+        <span class="s1">&#39;ensure&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;directory&#39;</span><span class="p">})</span>
+      <span class="p">}</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">contain_file</span><span class="p">(</span><span class="s1">&#39;/etc/ntp.conf&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">({</span>
+        <span class="s1">&#39;content&#39;</span> <span class="o">=&gt;</span> <span class="sr">/trustedkey 1 2 3/</span><span class="p">})</span>
+      <span class="p">}</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">contain_file</span><span class="p">(</span><span class="s1">&#39;/etc/ntp.conf&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">({</span>
+        <span class="s1">&#39;content&#39;</span> <span class="o">=&gt;</span> <span class="sr">/controlkey 2/</span><span class="p">})</span>
+      <span class="p">}</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">contain_file</span><span class="p">(</span><span class="s1">&#39;/etc/ntp.conf&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">({</span>
+        <span class="s1">&#39;content&#39;</span> <span class="o">=&gt;</span> <span class="sr">/requestkey 3/</span><span class="p">})</span>
+      <span class="p">}</span>
+    <span class="k">end</span>
+</pre></div>
+
+
+<p>Finally, we do the reverse, and check that when disabled it doesn&#8217;t contain
+the content you get when you enable <code>keys_enable</code>.</p>
+<div class="highlight"><pre>    <span class="n">describe</span> <span class="s2">&quot;when disabled&quot;</span> <span class="k">do</span>
+      <span class="n">let</span><span class="p">(</span><span class="ss">:params</span><span class="p">)</span> <span class="k">do</span>
+        <span class="p">{</span>
+          <span class="ss">:keys_enable</span> <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span>
+          <span class="ss">:keys_file</span> <span class="o">=&gt;</span> <span class="s1">&#39;/etc/ntp/ntp.keys&#39;</span><span class="p">,</span>
+          <span class="ss">:keys_trusted</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="o">]</span><span class="p">,</span>
+          <span class="ss">:keys_controlkey</span> <span class="o">=&gt;</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span>
+          <span class="ss">:keys_requestkey</span> <span class="o">=&gt;</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should_not</span> <span class="n">contain_file</span><span class="p">(</span><span class="s1">&#39;/etc/ntp&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">({</span>
+        <span class="s1">&#39;ensure&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;directory&#39;</span><span class="p">})</span>
+      <span class="p">}</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should_not</span> <span class="n">contain_file</span><span class="p">(</span><span class="s1">&#39;/etc/ntp.conf&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">({</span>
+        <span class="s1">&#39;content&#39;</span> <span class="o">=&gt;</span> <span class="sr">/trustedkey 1 2 3/</span><span class="p">})</span>
+      <span class="p">}</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should_not</span> <span class="n">contain_file</span><span class="p">(</span><span class="s1">&#39;/etc/ntp.conf&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">({</span>
+        <span class="s1">&#39;content&#39;</span> <span class="o">=&gt;</span> <span class="sr">/controlkey 2/</span><span class="p">})</span>
+      <span class="p">}</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should_not</span> <span class="n">contain_file</span><span class="p">(</span><span class="s1">&#39;/etc/ntp.conf&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">({</span>
+        <span class="s1">&#39;content&#39;</span> <span class="o">=&gt;</span> <span class="sr">/requestkey 3/</span><span class="p">})</span>
+      <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+
+
+<p>There&#8217;s a ton more information to be found at the (rspec-puppet
+website)[http://rspec-puppet.com/], including a full list of all the available
+&#8220;matchers&#8221; (things you can&nbsp;test).</p>
+<h2 id="beaker-and-beaker-rspec">Beaker and&nbsp;beaker-rspec</h2>
+<p>The previous kind of unit testing is a great way to do quick, lightweight,
+testing of your module.  It lets you quickly see if you&#8217;ve renamed a resource
+that breaks another class, or you&#8217;ve accidently changed the logic of a class in
+such a way that it adds content when you don&#8217;t want it to.  However, it&#8217;s just
+testing the contents of the catalog, what it can&#8217;t do is test what actually
+happens on a real live&nbsp;server.</p>
+<p>That kind of testing is generally called acceptance testing, and
+(Beaker)[https://github.com/puppetlabs/beaker] is our internal framework for
+this kind of testing.  It&#8217;s a little rough and ready around the edges in terms
+of documentation, because it was only used internally until the module team
+started adopting it for modules and spreading the good word about how powerful
+this kind of testing can&nbsp;be.</p>
+<p>Beaker is a framework to automatically create and manage virtual machines on
+various hypervisors, then apply numerous rspec tests against those virtual
+machines, then delete and destroy the machines as&nbsp;required.</p>
+<p>We&#8217;re working on better documentation, as well as long guides designed to take
+you from a blank module to a completely tested module, but in the meantime I
+hope this blog post can be enough inspiration to help you get started without
+those other kinds of&nbsp;documentation!</p>
+<p>We&#8217;ll take a hypothetical module, puppet-ssh, and add Beaker testing to it.  We
+start with creating the &#8216;spec_helper_acceptance.rb&#8217; file in the specs
+directory. This is a central place to put setup information for Beaker,
+generally things like code to install Puppet or&nbsp;modules.</p>
+<p>First we add beaker to our Gemfile.  If we don&#8217;t have one of those just cut
+and paste the below into a file called Gemfile in the root of your&nbsp;module.</p>
+<div class="highlight"><pre><span class="n">source</span> <span class="s1">&#39;https://rubygems.org&#39;</span>
+<span class="n">gem</span> <span class="s1">&#39;beaker-rspec&#39;</span>
+</pre></div>
+
+
+<p>And if we&#8217;re (bundler)[http://bundler.io/] users (and we&#8217;re all bundler
+users here, right?) we just run bundle install to get all the dependencies
+needed for&nbsp;beaker-rspec.</p>
+<p>Once this is done we need to create some framework for Beaker.  We&#8217;ll start
+by creating a very simple &#8220;nodeset&#8221;, a yaml file that lists out a virtual
+machine to test against.  We&#8217;ll put this in&nbsp;spec/acceptance/nodesets/default.yml.</p>
+<div class="highlight"><pre><span class="n">HOSTS</span><span class="o">:</span>
+  <span class="n">centos</span><span class="o">-</span><span class="mi">65</span><span class="o">-</span><span class="n">x64</span><span class="o">:</span>
+    <span class="n">roles</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">master</span>
+    <span class="n">platform</span><span class="o">:</span> <span class="n">el</span><span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="n">x86_64</span>
+    <span class="n">box</span> <span class="o">:</span> <span class="n">centos</span><span class="o">-</span><span class="mi">65</span><span class="o">-</span><span class="n">x64</span><span class="o">-</span><span class="n">vbox436</span><span class="o">-</span><span class="n">nocm</span>
+    <span class="n">box_url</span> <span class="o">:</span> <span class="n">http</span><span class="o">://</span><span class="n">puppet</span><span class="o">-</span><span class="n">vagrant</span><span class="o">-</span><span class="n">boxes</span><span class="o">.</span><span class="na">puppetlabs</span><span class="o">.</span><span class="na">com</span><span class="o">/</span><span class="n">centos</span><span class="o">-</span><span class="mi">65</span><span class="o">-</span><span class="n">x64</span><span class="o">-</span><span class="n">virtualbox</span><span class="o">-</span><span class="n">nocm</span><span class="o">.</span><span class="na">box</span>
+    <span class="n">hypervisor</span> <span class="o">:</span> <span class="n">vagrant</span>
+<span class="n">CONFIG</span><span class="o">:</span>
+  <span class="n">type</span><span class="o">:</span> <span class="n">foss</span>
+</pre></div>
+
+
+<p>These can be much more complex, including multiple hosts, but we&#8217;ll keep it
+simple.  Next we create spec/spec_helper_acceptance.rb.  We begin this file by
+requiring beaker-rspec itself.  The next block checks to see if we&#8217;ve passed in
+certain environment options when running beaker (we&#8217;ll talk more about these
+later) and only runs the provisioning code if we didn&#8217;t set&nbsp;RS_PROVISON=no.</p>
+<p>Assuming we didn&#8217;t set that, it then checks the nodeset that we pass to Beaker
+to determine if it should install Puppet Enterprise or plain old&nbsp;Puppet.</p>
+<div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;beaker-rspec&#39;</span>
+
+<span class="k">unless</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;RS_PROVISION&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;no&#39;</span>
+  <span class="n">hosts</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">host</span><span class="o">|</span>
+    <span class="c1"># Install Puppet</span>
+    <span class="k">if</span> <span class="n">host</span><span class="o">.</span><span class="n">is_pe?</span>
+      <span class="n">install_pe</span>
+    <span class="k">else</span>
+      <span class="n">install_package</span> <span class="n">host</span><span class="p">,</span> <span class="s1">&#39;rubygems&#39;</span>
+      <span class="n">on</span> <span class="n">host</span><span class="p">,</span> <span class="s1">&#39;gem install puppet --no-ri --no-rdoc&#39;</span>
+      <span class="n">on</span> <span class="n">host</span><span class="p">,</span> <span class="s2">&quot;mkdir -p </span><span class="si">#{</span><span class="n">host</span><span class="o">[</span><span class="s1">&#39;distmoduledir&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+
+
+<p>Next is some boilerplate RSpec.configure information.  We&#8217;re creating a
+proj_root variable that points to the module we&#8217;re testing, as well as making
+the rspec output a little prettier and easier to&nbsp;read.</p>
+<div class="highlight"><pre><span class="no">RSpec</span><span class="o">.</span><span class="n">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
+  <span class="c1"># Project root</span>
+  <span class="n">proj_root</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">),</span> <span class="s1">&#39;..&#39;</span><span class="p">))</span>
+
+  <span class="c1"># Readable test descriptions</span>
+  <span class="n">c</span><span class="o">.</span><span class="n">formatter</span> <span class="o">=</span> <span class="ss">:documentation</span>
+</pre></div>
+
+
+<p>This final block says &#8220;before you run an actual test, do the following&#8221;, which
+then calls puppet_module_install() to install the current module into &#8216;ssh&#8217; on
+the virtual machine, as well as runs two shell commands to create an empty
+hiera.yaml and install stdlib.  Here we see :acceptable_exit_codes for the
+first time, one of our primary ways of asserting the exit codes we&#8217;ll accept
+from&nbsp;commands.</p>
+<div class="highlight"><pre>  <span class="n">c</span><span class="o">.</span><span class="n">before</span> <span class="ss">:suite</span> <span class="k">do</span>
+    <span class="n">puppet_module_install</span><span class="p">(</span><span class="ss">:source</span> <span class="o">=&gt;</span> <span class="n">proj_root</span><span class="p">,</span> <span class="ss">:module_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;ssh&#39;</span><span class="p">)</span>
+    <span class="n">hosts</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">host</span><span class="o">|</span>
+
+      <span class="n">shell</span><span class="p">(</span><span class="s2">&quot;/bin/touch </span><span class="si">#{</span><span class="n">default</span><span class="o">[</span><span class="s1">&#39;puppetpath&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">/hiera.yaml&quot;</span><span class="p">)</span>
+      <span class="n">shell</span><span class="p">(</span><span class="s1">&#39;puppet module install puppetlabs-stdlib&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="ss">:acceptable_exit_codes</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="o">]</span> <span class="p">})</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+
+
+<p>With the basic helper and nodeset created we just need to make a few tests. We&#8217;ll
+put these in a file called spec/acceptance/class_spec.rb.  We include the file
+we just created, spec_helper_acceptance, and then describe what we&#8217;re&nbsp;testing.</p>
+<p>First we create <code>pp</code>, a variable to hold our manifest.  We use ruby&#8217;s <span class="caps">EOS</span>
+functionality to make sure we don&#8217;t have to backslash a bunch of stuff and
+can just cut and paste in manifests from&nbsp;elsewhere.</p>
+<div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper_acceptance&#39;</span>
+
+<span class="n">describe</span> <span class="s1">&#39;ssh class:&#39;</span> <span class="k">do</span>
+  <span class="n">it</span> <span class="s1">&#39;should run successfully&#39;</span> <span class="k">do</span>
+    <span class="n">pp</span> <span class="o">=</span> <span class="o">&lt;&lt;-</span><span class="no">EOS</span>
+<span class="sh">    class { &#39;ssh&#39;: }</span>
+<span class="no">    EOS</span>
+</pre></div>
+
+
+<p>Now we do the actual test.  apply_manifest() takes a manifest and various
+options about what the outcome should be.  On our first run we&#8217;re looking to
+&#8220;catch any failures&#8221; and then on our second run we&#8217;re looking to &#8220;catch any
+changes&#8221;.  This allows us to be confident we&#8217;re not changing the state of the
+machine on multiple runs if everything is set correctly the first time.  We
+have some other choices here, including :expect_failures and :expect_changes
+for testing things we expect to fail, or&nbsp;change.</p>
+<div class="highlight"><pre>    <span class="c1"># Apply twice to ensure no errors the second time.</span>
+    <span class="n">apply_manifest</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="ss">:catch_failures</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">)</span>
+    <span class="n">apply_manifest</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="ss">:catch_changes</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">)</span>
+  <span class="k">end</span>
+</pre></div>
+
+
+<p>Next we take advantage of our (ServerSpec)[http://serverspec.org/] integration
+in order to check the service is running.  ServerSpec understands a whole bunch
+of distributions and allows you to describe packages or services in an <span class="caps">OS</span>
+independent way.  It&#8217;ll understand that <span class="caps">RHEL</span> needs service x status and that
+Windows needs something totally different.  It has a number of resources
+documented on the website, we&#8217;ll just use service&nbsp;now.</p>
+<p>This is just an example to show you what serverspec has built in, for most
+tests we just stick to &#8216;be_running&#8217; and&nbsp;&#8216;be_enabled&#8217;.</p>
+<div class="highlight"><pre>  <span class="n">describe</span> <span class="n">service</span><span class="p">(</span><span class="s1">&#39;sshd&#39;</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">be_enabled</span><span class="o">.</span><span class="n">with_level</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="p">}</span>
+    <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">be_running</span> <span class="p">}</span>
+    <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">be_monitored_by</span><span class="p">(</span><span class="s1">&#39;monit&#39;</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+</pre></div>
+
+
+<p>Alternatively if we need to test something more complex we can rely on shell()
+commands.  We run a monitoring script installed by the module, assert that it
+must return a 0 exit code, and then give a regular expression to parse the
+stdout of the script for to make sure we&#8217;re happy with the state of&nbsp;things.</p>
+<div class="highlight"><pre>  <span class="n">describe</span> <span class="s1">&#39;some command&#39;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s1">&#39;runs a monitoring script&#39;</span> <span class="k">do</span>
+      <span class="n">shell</span><span class="p">(</span><span class="s2">&quot;/usr/local/bin/monitoring_ssh_script.sh&quot;</span><span class="p">,</span> <span class="ss">:acceptable_exit_codes</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">r</span><span class="o">|</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">match</span><span class="p">(</span><span class="sr">/SSH is alive and has \d+ users connected/</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+
+
+<p>Then putting all this together we just need to run a single command, if things
+worked, to see the output of all these&nbsp;tests.</p>
+<div class="highlight"><pre><span class="err">$</span> <span class="n">rspec</span> <span class="n">spec</span><span class="o">/</span><span class="n">acceptance</span><span class="o">/</span>
+<span class="n">Hypervisor</span> <span class="k">for</span> <span class="n">centos</span><span class="o">-</span><span class="mi">64</span><span class="o">-</span><span class="n">x64</span> <span class="n">is</span> <span class="n">vagrant</span>
+<span class="n">Beaker</span><span class="o">::</span><span class="n">Hypervisor</span><span class="p">,</span> <span class="n">found</span> <span class="n">some</span> <span class="n">vagrant</span> <span class="n">boxes</span> <span class="n">to</span> <span class="n">create</span>
+<span class="n">created</span> <span class="n">Vagrantfile</span> <span class="k">for</span> <span class="n">VagrantHost</span> <span class="n">centos</span><span class="o">-</span><span class="mi">64</span><span class="o">-</span><span class="n">x64</span>
+<span class="p">[</span><span class="n">bunch</span> <span class="n">of</span> <span class="n">deleted</span> <span class="n">stuff</span> <span class="n">about</span> <span class="n">bringing</span> <span class="n">up</span> <span class="n">a</span> <span class="n">virtual</span> <span class="n">machine</span> <span class="n">and</span> <span class="n">setup</span> <span class="n">commands</span><span class="p">]</span>
+<span class="n">Finished</span> <span class="n">in</span> <span class="mi">3</span> <span class="n">minutes</span> <span class="mf">15.2</span> <span class="n">seconds</span>
+<span class="mi">4</span> <span class="n">examples</span><span class="p">,</span> <span class="mi">0</span> <span class="n">failures</span>
+</pre></div>
+
+
+<p>I hope this has helped explain a little bit of our acceptance testing framework
+and made you realize it&#8217;s pretty easy to integrate into your workflow.  Here
+at Puppetlabs we mostly test with Vagrant/Virtualbox on our laptops as we
+develop and then use Vsphere to test via Jenkins before we&#8217;re ready to merge
+a <span class="caps">PR</span> or release the updated module.  For real life examples of Beaker you can
+look at many of the puppetlabs modules, such as apache, mysql, postgresql,
+firewall, for examples of real world&nbsp;testing.</p>
+  </div>
+</article>
+</div>
+
+        </div>
+        <div class='footer'>
+<p>All content on this site is licensed under the <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC Attribution-ShareAlike 4.0 International</a>        </div>
+      </div>
+    </div>
+  </body>
+</html>
