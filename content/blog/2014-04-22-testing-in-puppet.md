@@ -20,7 +20,7 @@ rspec and then verify that various resources appear, along with what their prope
 may be.  For a very simple example of this we can look at the ntp module.
 
 In ntp, we start with a describe block, which is a standard part of
-(rspec)[http://rspec.info/] and acts as a kind of container for all the stuff
+[rspec](http://rspec.info/) and acts as a kind of container for all the stuff
 relating to specific tests.  We give it the name of the class we're testing.
 We then create more describe blocks to allow us to explain very specifically
 what we're going to be testing.
@@ -98,8 +98,8 @@ the content you get when you enable `keys_enable`.
 end
 ```
 
-There's a ton more information to be found at the (rspec-puppet
-website)[http://rspec-puppet.com/], including a full list of all the available
+There's a ton more information to be found at the [rspec-puppet
+website](http://rspec-puppet.com/), including a full list of all the available
 "matchers" (things you can test).
 
 ##Beaker and beaker-rspec
@@ -112,7 +112,7 @@ testing the contents of the catalog, what it can't do is test what actually
 happens on a real live server.
 
 That kind of testing is generally called acceptance testing, and
-(Beaker)[https://github.com/puppetlabs/beaker] is our internal framework for
+[Beaker](https://github.com/puppetlabs/beaker) is our internal framework for
 this kind of testing.  It's a little rough and ready around the edges in terms
 of documentation, because it was only used internally until the module team
 started adopting it for modules and spreading the good word about how powerful
@@ -140,7 +140,7 @@ source 'https://rubygems.org'
 gem 'beaker-rspec'
 ```
 
-And if we're (bundler)[http://bundler.io/] users (and we're all bundler
+And if we're [bundler](http://bundler.io/) users (and we're all bundler
 users here, right?) we just run bundle install to get all the dependencies
 needed for beaker-rspec.
 
@@ -253,7 +253,7 @@ for testing things we expect to fail, or change.
   end
 ```
 
-Next we take advantage of our (ServerSpec)[http://serverspec.org/] integration
+Next we take advantage of our [ServerSpec](http://serverspec.org/) integration
 in order to check the service is running.  ServerSpec understands a whole bunch
 of distributions and allows you to describe packages or services in an OS
 independent way.  It'll understand that RHEL needs service x status and that
