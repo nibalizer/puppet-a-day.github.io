@@ -85,7 +85,7 @@ modules.  Written by Tim Sharpe, rspec-puppet allows you to build catalogs in
 rspec and then verify that various resources appear, along with what their properties
 may be.  For a very simple example of this we can look at the ntp&nbsp;module.</p>
 <p>In ntp, we start with a describe block, which is a standard part of
-(rspec)[http://rspec.info/] and acts as a kind of container for all the stuff
+<a href="http://rspec.info/">rspec</a> and acts as a kind of container for all the stuff
 relating to specific tests.  We give it the name of the class we&#8217;re testing.
 We then create more describe blocks to allow us to explain very specifically
 what we&#8217;re going to be&nbsp;testing.</p>
@@ -159,8 +159,8 @@ the content you get when you enable <code>keys_enable</code>.</p>
 </pre></div>
 
 
-<p>There&#8217;s a ton more information to be found at the (rspec-puppet
-website)[http://rspec-puppet.com/], including a full list of all the available
+<p>There&#8217;s a ton more information to be found at the <a href="http://rspec-puppet.com/">rspec-puppet
+website</a>, including a full list of all the available
 &#8220;matchers&#8221; (things you can&nbsp;test).</p>
 <h2 id="beaker-and-beaker-rspec">Beaker and&nbsp;beaker-rspec</h2>
 <p>The previous kind of unit testing is a great way to do quick, lightweight,
@@ -170,7 +170,7 @@ such a way that it adds content when you don&#8217;t want it to.  However, it&#8
 testing the contents of the catalog, what it can&#8217;t do is test what actually
 happens on a real live&nbsp;server.</p>
 <p>That kind of testing is generally called acceptance testing, and
-(Beaker)[https://github.com/puppetlabs/beaker] is our internal framework for
+<a href="https://github.com/puppetlabs/beaker">Beaker</a> is our internal framework for
 this kind of testing.  It&#8217;s a little rough and ready around the edges in terms
 of documentation, because it was only used internally until the module team
 started adopting it for modules and spreading the good word about how powerful
@@ -193,7 +193,7 @@ and paste the below into a file called Gemfile in the root of your&nbsp;module.<
 </pre></div>
 
 
-<p>And if we&#8217;re (bundler)[http://bundler.io/] users (and we&#8217;re all bundler
+<p>And if we&#8217;re <a href="http://bundler.io/">bundler</a> users (and we&#8217;re all bundler
 users here, right?) we just run bundle install to get all the dependencies
 needed for&nbsp;beaker-rspec.</p>
 <p>Once this is done we need to create some framework for Beaker.  We&#8217;ll start
@@ -296,7 +296,7 @@ for testing things we expect to fail, or&nbsp;change.</p>
 </pre></div>
 
 
-<p>Next we take advantage of our (ServerSpec)[http://serverspec.org/] integration
+<p>Next we take advantage of our <a href="http://serverspec.org/">ServerSpec</a> integration
 in order to check the service is running.  ServerSpec understands a whole bunch
 of distributions and allows you to describe packages or services in an <span class="caps">OS</span>
 independent way.  It&#8217;ll understand that <span class="caps">RHEL</span> needs service x status and that
