@@ -33,8 +33,8 @@ but those are&amp;nbsp;optional.&lt;/p&gt;
 &lt;/ul&gt;
 &lt;p&gt;If you&amp;#8217;re contributing to a Puppetlabs module and you feel your &lt;span class="caps"&gt;PR&lt;/span&gt; isn&amp;#8217;t
 getting the attention it deserves, stop by for the weekly Module Triage
-hangout on Thursdays around 10 &lt;span class="caps"&gt;AM&lt;/span&gt; Portland Time. Links are posted&amp;nbsp;in&lt;/p&gt;
-&lt;h1 id="puppet-dev-on-irc-and-on-the-puppet-developers-mailing-list-beforehand"&gt;puppet-dev on &lt;span class="caps"&gt;IRC&lt;/span&gt; and on the Puppet Developers mailing list&amp;nbsp;beforehand.&lt;/h1&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Daenney</dc:creator><pubDate>Wed, 23 Apr 2014 00:00:00 +0000</pubDate><guid>tag:puppet-a-day.com,2014-04-23:blog/2014/04/23/contributing-to-modules/</guid></item><item><title>Modern testing of modules</title><link>http://puppet-a-day.com/blog/2014/04/22/modern-testing-of-modules/</link><description>&lt;p&gt;At Puppet Labs, we&amp;#8217;ve been busy over the last few months, working on overhauling our
+hangout on Thursdays around 10 &lt;span class="caps"&gt;AM&lt;/span&gt; Portland Time. Links are posted in
+the #puppet-dev on &lt;span class="caps"&gt;IRC&lt;/span&gt; and on the Puppet Developers mailing list&amp;nbsp;beforehand.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Daenney</dc:creator><pubDate>Wed, 23 Apr 2014 00:00:00 +0000</pubDate><guid>tag:puppet-a-day.com,2014-04-23:blog/2014/04/23/contributing-to-modules/</guid></item><item><title>Modern testing of modules</title><link>http://puppet-a-day.com/blog/2014/04/22/modern-testing-of-modules/</link><description>&lt;p&gt;At Puppet Labs, we&amp;#8217;ve been busy over the last few months, working on overhauling our
 public modules to treat them as distinct pieces of software rather than less tested&amp;nbsp;one-offs.&lt;/p&gt;
 &lt;p&gt;A huge part of the overhaul has centered on testing the modules properly, and today
 I want to give a quick overview to the current, state of the art testing available for&amp;nbsp;modules.&lt;/p&gt;
