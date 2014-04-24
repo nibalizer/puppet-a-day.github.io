@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta property="og:site_name" content="Puppet a day">
+    <meta name="twitter:card" content="summary">
+    <meta property="og:type" content="article"/>
+    <meta property="og:title" content="Contributing to modules">
+    <meta property="og:url" content="http://puppet-a-day.com/blog/2014/04/23/contributing-to-modules/">
+    <meta property="og:description" content="What you need to do when contributing to modules">
+    <meta property="article:published_time" content="2014-04-23">
+    <meta name="twitter:title" content="Contributing to modules">
+    <meta name="twitter:description" content="What you need to do when contributing to modules">
+    <meta property="article:section" content="blog">
+    <meta property="article:author" content="Daenney">
+    <meta name="twitter:creator" content="@daenney">
+
+    <title>Puppet a day</title>
+
+    <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.5.0-rc-1/pure-min.css">
+    <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.5.0-rc-1/grids-responsive-min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <!--[if lt IE 9]>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="http://puppet-a-day.com/theme/css/puppet-a-day.css">
+    <link rel="stylesheet" href="http://puppet-a-day.com/theme/css/pygments.css">
+  </head>
+  <body>
+    <div id="layout" class="pure-g">
+<div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    <hgroup>
+      <h1 class="brand-title"><a href="/">Puppet a day</a></h1>
+      <h2 class="brand-tagline">crowdsourced community blog</h2>
+    </hgroup>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/archives">Archives</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/authors">Authors</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/categories">Categories</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/tags">Tags</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="https://github.com/puppet-a-day/puppet-a-day.github.io"><i class="fa fa-github"></i> Github</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>      <div class="content pure-u-1 pure-u-md-3-4">
+        <div>
+
+<div class="posts">
+  <article class="post h-entry">
+  <header class="article-header">
+    <img class="article-avatar" alt="Daenney" src="http://www.gravatar.com/avatar/5f627cc6ce7340c04d1bfd637380c271" height="56px" width="56px">
+    <h2 class="post-title">Contributing to&nbsp;modules</h2>
+    <div class="post-meta h-card">
+      By <span class="p-name"><a class="u-url" href="/author/daenney">
+          Daenney</a></span>
+      in <a href="/category/blog"
+        class="post-category post-category-blog">
+        blog</a>
+      on <time class="dt-published" datetime="2014-04-23T00:00:00">Wed 23 April 2014</time>
+    </div>
+  </header>
+  <div class="e-content ">
+    <p>As one of the &#8216;maintainers&#8217; of <a href="https://github.com/puppetlabs/puppetlabs-apt">puppetlabs-apt</a>
+I get pull requests in my inbox on a weekly basis implementing some kind of
+feature. This is really cool. It means people found bugs, fixed them or
+implemented new ones (features that is, we&nbsp;hope).</p>
+<p>But&#8230; modules have tests and when you submit a <span class="caps">PR</span> without tests, the only
+thing we will do is <em>ask for tests</em>. We won&#8217;t make an exception for you. If you
+want your <span class="caps">PR</span> merged, it&#8217;ll need to be up to&nbsp;par.</p>
+<p>This&nbsp;means:</p>
+<ul>
+<li>It doesn&#8217;t break current tests (yes this happens,&nbsp;often);</li>
+<li>It introduces tests for the new/fixed behaviour (so we don&#8217;t&nbsp;regress).</li>
+</ul>
+<p>We need to write and maintain modules that work for everyone and don&#8217;t
+accidentally break on people reaping havoc across their&nbsp;machines.</p>
+<p>So what kind of tests do we expect? At the very least the acceptance tests
+should be updated. Those spin up actual machines through Beaker and apply
+(parts) of the module to machines and check its behaviour. If you can, or if
+your change contains complex logic we&#8217;d also appreciate updated rspec tests,
+but those are&nbsp;optional.</p>
+<p>In the end, the golden rules for contributing (to any opensource project really)&nbsp;are:</p>
+<ul>
+<li>Submit <span class="caps">PR</span>&#8217;s with tests. If you don&#8217;t know how to write tests, put that in
+   the <span class="caps">PR</span> too, so we know how to help&nbsp;you;</li>
+<li>Work with us and we&#8217;ll work with you. It&#8217;s okay if you <span class="caps">PR</span> is not perfect or
+   if you&#8217;re unfamiliar with writing tests. As long as you&#8217;re willing to put in
+   the work we&#8217;re willing to coach you. Perhaps you can have a look at this
+   <a href="http://puppet-a-day.com/blog/2014/04/22/modern-testing-of-modules/">post</a> to
+   get you&nbsp;going;</li>
+<li>Don&#8217;t ride off into the sunset. If you submit a <span class="caps">PR</span> we expect you to stick
+   around for the follow-ups. If not then it&#8217;ll simply not get merged. Not
+   because we&#8217;re mean, but because we too have a thousand other things to do&nbsp;too.</li>
+</ul>
+<p>If you&#8217;re contributing to a Puppetlabs module and you feel your <span class="caps">PR</span> isn&#8217;t
+getting the attention it deserves, stop by for the weekly Module Triage
+hangout on Thursdays around 10 <span class="caps">AM</span> Portland Time. Links are posted&nbsp;in</p>
+<h1 id="puppet-dev-on-irc-and-on-the-puppet-developers-mailing-list-beforehand">puppet-dev on <span class="caps">IRC</span> and on the Puppet Developers mailing list&nbsp;beforehand.</h1>
+  </div>
+</article>
+</div>
+
+        </div>
+        <div class='footer'>
+<p>All content on this site is licensed under the <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC Attribution-ShareAlike 4.0 International</a>        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,5 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Puppet a day</title><link>http://puppet-a-day.com/</link><description>crowdsourced community blog</description><atom:link href="http://puppet-a-day.com/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 22 Apr 2014 00:00:00 +0000</lastBuildDate><item><title>Modern testing of modules</title><link>http://puppet-a-day.com/blog/2014/04/22/modern-testing-of-modules/</link><description>&lt;p&gt;At Puppet Labs, we&amp;#8217;ve been busy over the last few months, working on overhauling our
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Puppet a day</title><link>http://puppet-a-day.com/</link><description>crowdsourced community blog</description><atom:link href="http://puppet-a-day.com/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 23 Apr 2014 00:00:00 +0000</lastBuildDate><item><title>Contributing to modules</title><link>http://puppet-a-day.com/blog/2014/04/23/contributing-to-modules/</link><description>&lt;p&gt;As one of the &amp;#8216;maintainers&amp;#8217; of &lt;a href="https://github.com/puppetlabs/puppetlabs-apt"&gt;puppetlabs-apt&lt;/a&gt;
+I get pull requests in my inbox on a weekly basis implementing some kind of
+feature. This is really cool. It means people found bugs, fixed them or
+implemented new ones (features that is, we&amp;nbsp;hope).&lt;/p&gt;
+&lt;p&gt;But&amp;#8230; modules have tests and when you submit a &lt;span class="caps"&gt;PR&lt;/span&gt; without tests, the only
+thing we will do is &lt;em&gt;ask for tests&lt;/em&gt;. We won&amp;#8217;t make an exception for you. If you
+want your &lt;span class="caps"&gt;PR&lt;/span&gt; merged, it&amp;#8217;ll need to be up to&amp;nbsp;par.&lt;/p&gt;
+&lt;p&gt;This&amp;nbsp;means:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It doesn&amp;#8217;t break current tests (yes this happens,&amp;nbsp;often);&lt;/li&gt;
+&lt;li&gt;It introduces tests for the new/fixed behaviour (so we don&amp;#8217;t&amp;nbsp;regress).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We need to write and maintain modules that work for everyone and don&amp;#8217;t
+accidentally break on people reaping havoc across their&amp;nbsp;machines.&lt;/p&gt;
+&lt;p&gt;So what kind of tests do we expect? At the very least the acceptance tests
+should be updated. Those spin up actual machines through Beaker and apply
+(parts) of the module to machines and check its behaviour. If you can, or if
+your change contains complex logic we&amp;#8217;d also appreciate updated rspec tests,
+but those are&amp;nbsp;optional.&lt;/p&gt;
+&lt;p&gt;In the end, the golden rules for contributing (to any opensource project really)&amp;nbsp;are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Submit &lt;span class="caps"&gt;PR&lt;/span&gt;&amp;#8217;s with tests. If you don&amp;#8217;t know how to write tests, put that in
+   the &lt;span class="caps"&gt;PR&lt;/span&gt; too, so we know how to help&amp;nbsp;you;&lt;/li&gt;
+&lt;li&gt;Work with us and we&amp;#8217;ll work with you. It&amp;#8217;s okay if you &lt;span class="caps"&gt;PR&lt;/span&gt; is not perfect or
+   if you&amp;#8217;re unfamiliar with writing tests. As long as you&amp;#8217;re willing to put in
+   the work we&amp;#8217;re willing to coach you. Perhaps you can have a look at this
+   &lt;a href="http://puppet-a-day.com/blog/2014/04/22/modern-testing-of-modules/"&gt;post&lt;/a&gt; to
+   get you&amp;nbsp;going;&lt;/li&gt;
+&lt;li&gt;Don&amp;#8217;t ride off into the sunset. If you submit a &lt;span class="caps"&gt;PR&lt;/span&gt; we expect you to stick
+   around for the follow-ups. If not then it&amp;#8217;ll simply not get merged. Not
+   because we&amp;#8217;re mean, but because we too have a thousand other things to do&amp;nbsp;too.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If you&amp;#8217;re contributing to a Puppetlabs module and you feel your &lt;span class="caps"&gt;PR&lt;/span&gt; isn&amp;#8217;t
+getting the attention it deserves, stop by for the weekly Module Triage
+hangout on Thursdays around 10 &lt;span class="caps"&gt;AM&lt;/span&gt; Portland Time. Links are posted&amp;nbsp;in&lt;/p&gt;
+&lt;h1 id="puppet-dev-on-irc-and-on-the-puppet-developers-mailing-list-beforehand"&gt;puppet-dev on &lt;span class="caps"&gt;IRC&lt;/span&gt; and on the Puppet Developers mailing list&amp;nbsp;beforehand.&lt;/h1&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Daenney</dc:creator><pubDate>Wed, 23 Apr 2014 00:00:00 +0000</pubDate><guid>tag:puppet-a-day.com,2014-04-23:blog/2014/04/23/contributing-to-modules/</guid></item><item><title>Modern testing of modules</title><link>http://puppet-a-day.com/blog/2014/04/22/modern-testing-of-modules/</link><description>&lt;p&gt;At Puppet Labs, we&amp;#8217;ve been busy over the last few months, working on overhauling our
 public modules to treat them as distinct pieces of software rather than less tested&amp;nbsp;one-offs.&lt;/p&gt;
 &lt;p&gt;A huge part of the overhaul has centered on testing the modules properly, and today
 I want to give a quick overview to the current, state of the art testing available for&amp;nbsp;modules.&lt;/p&gt;
