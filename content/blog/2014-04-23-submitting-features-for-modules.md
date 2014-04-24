@@ -46,4 +46,4 @@ are:
 If you're contributing to a Puppetlabs module and you feel your PR isn't
 getting the attention it deserves, stop by for the weekly Module Triage
 hangout on Thursdays around 10 AM Portland Time. Links are posted in
-#puppet-dev on IRC and on the Puppet Developers mailing list beforehand.
+the #puppet-dev on IRC and on the Puppet Developers mailing list beforehand.
