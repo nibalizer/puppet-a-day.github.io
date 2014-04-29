@@ -179,9 +179,7 @@ unless ENV['RS_PROVISION'] == 'no'
     if host.is_pe?
       install_pe
     else
-      install_package host, 'rubygems'
-      on host, 'gem install puppet --no-ri --no-rdoc'
-      on host, "mkdir -p #{host['distmoduledir']}"
+      install_puppet
     end
   end
 end
