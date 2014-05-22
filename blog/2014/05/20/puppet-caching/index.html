@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta property="og:site_name" content="Puppet a day">
+    <meta name="twitter:card" content="summary">
+    <meta property="og:type" content="article"/>
+    <meta property="og:title" content="Puppet caching">
+    <meta property="og:url" content="http://puppet-a-day.com/blog/2014/05/20/puppet-caching/">
+    <meta property="og:description" content="Caching things with Puppet 3.6 and nginx">
+    <meta property="article:published_time" content="2014-05-20">
+    <meta name="twitter:title" content="Puppet caching">
+    <meta name="twitter:description" content="Caching things with Puppet 3.6 and nginx">
+    <meta property="article:section" content="blog">
+    <meta property="article:author" content="Daenney">
+    <meta name="twitter:creator" content="@daenney">
+
+    <title>Puppet a day</title>
+
+    <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.5.0-rc-1/pure-min.css">
+    <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.5.0-rc-1/grids-responsive-min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <!--[if lt IE 9]>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="http://puppet-a-day.com/theme/css/puppet-a-day.css">
+    <link rel="stylesheet" href="http://puppet-a-day.com/theme/css/pygments.css">
+  </head>
+  <body>
+    <div id="layout" class="pure-g">
+<div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    <hgroup>
+      <h1 class="brand-title"><a href="/">Puppet a day</a></h1>
+      <h2 class="brand-tagline">crowdsourced community blog</h2>
+    </hgroup>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/archives">Archives</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/authors">Authors</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/categories">Categories</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/tags">Tags</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="https://github.com/puppet-a-day/puppet-a-day.github.io"><i class="fa fa-github"></i> Github</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>      <div class="content pure-u-1 pure-u-md-3-4">
+        <div>
+
+<div class="posts">
+  <article class="post h-entry">
+  <header class="article-header">
+    <img class="article-avatar" alt="Daenney" src="http://www.gravatar.com/avatar/5f627cc6ce7340c04d1bfd637380c271" height="56px" width="56px">
+    <h2 class="post-title">Puppet&nbsp;caching</h2>
+    <div class="post-meta h-card">
+      By <span class="p-name"><a class="u-url" href="/author/daenney">
+          Daenney</a></span>
+      in <a href="/category/blog"
+        class="post-category post-category-blog">
+        blog</a>
+      on <time class="dt-published" datetime="2014-05-20T00:00:00">Tue 20 May 2014</time>
+    </div>
+  </header>
+  <div class="e-content ">
+    <p>With Puppet 3.6 out the door and the new caching mechanisms it provides I
+started exploring how to do caching with Puppet. A thank you goes out to
+<a href="https://github.com/kbarber" title="Github - Ken Barber">Ken Barber</a> of <a href="http://www.puppetlabs.com" title="Puppet Labs">Puppet Labs</a> and <a href="https://github.com/daen" title="Github - Erik Dalén">Erik Dalén</a> of
+<a href="http://www.spotify.com" title="Spotify">Spotify</a> for their help on this&nbsp;quest.</p>
+<p>The first thing I wanted to do is use the new caching mechanism for directory
+based environments on Puppet 3.6 in such a way that our production environment
+would be cached forever. Of course we also need a way to invalidate that cache
+when we deploy but between two deploys this code never ever&nbsp;changes.</p>
+<h2 id="directory-based-environments-cache">Directory-based environments&nbsp;cache</h2>
+<p>First order of business, turn on caching in <code>/etc/puppet/puppet.conf</code>:</p>
+<div class="highlight"><pre><span class="na">environment_cache</span> <span class="o">=</span> <span class="s">unlimited</span>
+</pre></div>
+
+
+<p>Restart the Puppet master and there you go. All the <code>*.pp</code> files are now parsed
+once (instead of being reparsed every 5s or so). Problem is, how do we
+invalidate this&nbsp;cache?</p>
+<p>If you&#8217;re running the &#8216;community&#8217; stack all it takes is to tell Passenger to
+reload. This can be done by simply touching the <code>tmp/restart.txt</code> file that
+Passenger looks for. On the next request it receives, Passenger will reload and
+the Puppet Master will now reparse the <code>*.pp</code> files for the&nbsp;environment.</p>
+<p>The location of the <code>tmp/</code> directory varies but it&#8217;s right next to where the
+<code>config.ru</code> file is&nbsp;located:</p>
+<div class="highlight"><pre>.
+├── config.ru
+├── public
+└── tmp
+    └── restart.txt
+</pre></div>
+
+
+<p>There is no need to remove the <code>restart.txt</code> file, Passenger looks at the
+timestamp when a request comes in and makes the right&nbsp;decision.</p>
+<p>If you&#8217;re deploying with Capistrano you can override the <code>finalize_update</code> task
+and add something like this in&nbsp;it:</p>
+<div class="highlight"><pre><span class="n">task</span> <span class="ss">:finalize_update</span> <span class="k">do</span>
+    <span class="n">run</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">try_sudo</span><span class="si">}</span><span class="s2"> touch /usr/share/puppet/ext/rack/tmp/restart.txt&quot;</span>
+<span class="k">end</span>
+</pre></div>
+
+
+<h2 id="nginx-cache">Nginx&nbsp;cache</h2>
+<p>The second thing I wanted to do is cache a few more things at the nginx level.
+If you drill down a bit into Puppet you&#8217;ll notice that one of the things the
+agent does frequently is request things from the following&nbsp;endpoints:</p>
+<ul>
+<li><code>/$environment/file_metadata</code></li>
+<li><code>/$environment/file_metadatas</code></li>
+<li><code>/$environment/file_content</code></li>
+</ul>
+<p>These endpoints are computationally expensive; <code>file_metadata</code> for example ends
+up running <code>md5sum</code> over every file that is being transferred and
+<code>file_metadatas</code> does the same but in bulk for the plugins that are being&nbsp;synced.</p>
+<p>As you can imagine, <code>md5sum</code> over all these files constantly is slow and also
+pretty useless as we just stated that these files don&#8217;t change except for when
+we deploy. Prime candidate for some fancy&nbsp;caching!</p>
+<p>The first thing to do is configure the cache space itself in nginx. This <em>must</em>
+be done in the <a href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_path" title="NGINX - proxy_cache_path"><code>http</code></a>&nbsp;block.</p>
+<div class="highlight"><pre><span class="k">proxy_cache_path</span> <span class="s">/var/cache/nginx</span> <span class="s">levels=1</span> <span class="s">keys_zone=puppetmaster:10m</span> <span class="s">max_size=500m</span> <span class="s">inactive=60m</span><span class="p">;</span>
+<span class="k">proxy_temp_path</span> <span class="s">/var/cache/tmp</span><span class="p">;</span>
+</pre></div>
+
+
+<p>What we&#8217;ve configured here is a cache space who&#8217;s files will live in
+<code>/var/cache/nginx</code>, have a directory structure of 1 level/folder deep, a
+<code>key_zone</code> size of 10 megabytes, allowed to grow to 500 megabytes of disk space
+and entries will be removed after 60 minutes if not being&nbsp;hit.</p>
+<p>The <code>proxy_temp_path</code> is a filesystem location where temporary files that nginx
+creates for its own purposes will live. It&#8217;s a good idea for these directories
+to be on the <em>same</em>&nbsp;filesystem.</p>
+<p>Up next, configuring the actual cache for the&nbsp;proxy:</p>
+<div class="highlight"><pre><span class="k">location</span> <span class="p">~</span> <span class="sr">^/production/file_(metadatas?|content)</span> <span class="p">{</span>
+        <span class="kn">proxy_redirect</span>             <span class="no">off</span><span class="p">;</span>
+        <span class="kn">proxy_cache</span>                <span class="s">puppetmaster</span><span class="p">;</span>
+        <span class="kn">proxy_cache_valid</span>          <span class="mi">200</span> <span class="mi">302</span> <span class="mi">15m</span><span class="p">;</span>
+        <span class="kn">proxy_cache_valid</span>          <span class="mi">404</span> <span class="mi">1m</span><span class="p">;</span>
+        <span class="kn">proxy_pass</span>                 <span class="s">http://puppetmaster</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>This block tells nginx to match certain paths in the request and proxy those to
+the Puppet Master but by using the cache. A backend response of <code>200</code> or <code>302</code>
+is cached for 15 minutes, a <code>404</code> is cached for&nbsp;1m.</p>
+<p>Notice that we&#8217;re only matching <code>/production</code>, the production environment and
+not any other. This is done on purpose, the other environments are usually for
+testing that map to a feature-branch in git. We usually have no need to cache
+these as they are&nbsp;short-lived.</p>
+<p>A somewhat complete configuration looks like&nbsp;this:</p>
+<div class="highlight"><pre><span class="k">upstream</span> <span class="s">puppetmaster</span> <span class="p">{</span>
+    <span class="kn">server</span> <span class="s">unix:/path/to/passenger/puppetmaster/socket/file.sock</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">server</span> <span class="p">{</span>
+    <span class="kn">listen</span>              <span class="mi">8140</span><span class="p">;</span>
+    <span class="kn">root</span>                <span class="s">/usr/share/puppet/ext/rack</span><span class="p">;</span>
+    <span class="kn">ssl_certificate</span>     <span class="s">/var/lib/puppet/ssl/certs/</span><span class="nv">$FQDN.pem</span><span class="p">;</span>
+    <span class="kn">ssl_certificate_key</span> <span class="s">/var/lib/puppet/ssl/private_keys/</span><span class="nv">$FQDN.pem</span><span class="p">;</span>
+    <span class="kn">ssl_verify_client</span>   <span class="s">optional</span><span class="p">;</span>
+
+    <span class="c1"># All HTTP API requests, requiring a valid certificate</span>
+    <span class="kn">location</span> <span class="s">/</span> <span class="p">{</span>
+        <span class="kn">if</span> <span class="s">(</span><span class="nv">$ssl_client_verify</span> <span class="s">!=</span> <span class="s">SUCCESS)</span> <span class="p">{</span>
+            <span class="kn">return</span> <span class="mi">403</span><span class="p">;</span>
+            <span class="kn">break</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="kn">proxy_set_header</span>  <span class="s">X-Client-Verify</span>  <span class="nv">$ssl_client_verify</span><span class="p">;</span>
+        <span class="kn">proxy_set_header</span>  <span class="s">X-Client-DN</span>      <span class="nv">$ssl_client_s_dn</span><span class="p">;</span>
+        <span class="kn">proxy_set_header</span>  <span class="s">X-SSL-Subject</span>    <span class="nv">$ssl_client_s_dn</span><span class="p">;</span>
+        <span class="kn">proxy_set_header</span>  <span class="s">X-SSL-Issuer</span>     <span class="nv">$ssl_client_i_dn</span><span class="p">;</span>
+        <span class="kn">proxy_redirect</span>    <span class="no">off</span><span class="p">;</span>
+        <span class="kn">proxy_pass</span>        <span class="s">http://puppetmaster</span><span class="p">;</span>
+    <span class="p">}</span>
+
+
+    <span class="c1"># Requests for cached endpoints, requiring a valid certificate</span>
+    <span class="kn">location</span> <span class="p">~</span> <span class="sr">^/production/file_(metadatas?|content)</span> <span class="p">{</span>
+        <span class="kn">if</span> <span class="s">(</span><span class="nv">$ssl_client_verify</span> <span class="s">!=</span> <span class="s">SUCCESS)</span> <span class="p">{</span>
+            <span class="kn">return</span> <span class="mi">403</span><span class="p">;</span>
+            <span class="kn">break</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="kn">proxy_cache_valid</span>  <span class="mi">200</span> <span class="mi">302</span> <span class="mi">15m</span><span class="p">;</span>
+        <span class="kn">proxy_cache_valid</span>  <span class="mi">404</span> <span class="mi">1m</span><span class="p">;</span>
+        <span class="kn">proxy_pass</span>         <span class="s">http://puppetmaster</span><span class="p">;</span>
+        <span class="kn">proxy_set_header</span>   <span class="s">X-Client-Verify</span>  <span class="nv">$ssl_client_verify</span><span class="p">;</span>
+        <span class="kn">proxy_set_header</span>   <span class="s">X-Client-DN</span>      <span class="nv">$ssl_client_s_dn</span><span class="p">;</span>
+        <span class="kn">proxy_set_header</span>   <span class="s">X-SSL-Subject</span>    <span class="nv">$ssl_client_s_dn</span><span class="p">;</span>
+        <span class="kn">proxy_set_header</span>   <span class="s">X-SSL-Issuer</span>     <span class="nv">$ssl_client_i_dn</span><span class="p">;</span>
+        <span class="kn">proxy_redirect</span>     <span class="no">off</span><span class="p">;</span>
+        <span class="kn">proxy_cache</span>        <span class="s">puppetmaster</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Requests for /certificate, used before a valid certificate</span>
+    <span class="c1"># has been recieved, therefor not requiring $ssl_client_verify</span>
+    <span class="kn">location</span> <span class="s">/certificate</span> <span class="p">{</span>
+        <span class="kn">proxy_redirect</span>    <span class="no">off</span><span class="p">;</span>
+        <span class="kn">proxy_pass</span>        <span class="s">http://puppetmaster</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Reload your nginx configuration and enjoy. Keep in mind that this cache will
+not speed up agent run times but will mostly decrease load on your&nbsp;masters.</p>
+<p>We are left with one problem though; how do we invalidate this cache at deploy
+time? Throwing away the cache is pretty easy, just remove all files in
+<code>/var/cache/nginx</code> and you&#8217;re done. Trouble is, you probably don&#8217;t have the
+permissions to do so and you probably don&#8217;t want to be <code>sudo</code>ing during your
+deploy to do&nbsp;so.</p>
+<p>Enter mod_lua for nginx. This allows us to create an endpoint on the Puppet
+Master vhost that we can hit, simply with cURL, which will take care of
+throwing away the cache. Beware that this is a hack, albeit an awesome&nbsp;one:</p>
+<div class="highlight"><pre><span class="k">location</span> <span class="s">/cache_purge</span> <span class="p">{</span>
+    <span class="kn">limit_except</span> <span class="s">POST</span> <span class="p">{</span>
+        <span class="kn">allow</span> <span class="mi">127</span><span class="s">.0.0.1</span><span class="p">;</span>
+        <span class="kn">allow</span> <span class="p">::</span><span class="mi">1</span><span class="p">;</span>
+        <span class="kn">deny</span> <span class="s">all</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kn">content_by_lua</span> <span class="s">&#39;</span>
+        <span class="s">os.execute(&quot;find</span> <span class="s">/var/cache/nginx</span> <span class="s">-type</span> <span class="s">f</span> <span class="s">-delete&quot;)</span>
+        <span class="s">ngx.status</span> <span class="p">=</span> <span class="mi">204</span>
+    <span class="s">&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>I&#8217;m sure you can guess what this does. You can now post to <code>/cache_purge</code> which
+in turn, by using the power of Lua, executes the necessary command to clear up
+the&nbsp;cache.</p>
+<p>Going back to the Capistrano example earlier you can now add this&nbsp;too:</p>
+<div class="highlight"><pre><span class="n">task</span> <span class="ss">:finalize_update</span> <span class="k">do</span>
+    <span class="n">run</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">try_sudo</span><span class="si">}</span><span class="s2"> touch /usr/share/puppet/ext/rack/tmp/restart.txt&quot;</span>
+    <span class="n">run</span> <span class="s1">&#39;curl --silent -k -X POST https://localhost:8140/cache_purge&#39;</span>
+<span class="k">end</span>
+</pre></div>
+
+
+<p>I personally frown on the <code>-k</code> in the cURL command here so I suggest you
+alter it to include <code>--cacert</code> and point that to
+<code>/var/lib/puppet/ssl/certs/ca.pem</code> instead.</p>
+<h2 id="apache-cache">Apache&nbsp;cache</h2>
+<p>The cache configuration for nginx is inspired based on what <a href="https://github.com/daen" title="Github - Erik Dalén">Erik Dalén</a>
+has been doing at Spotify and decided to&nbsp;share:</p>
+<script src="https://gist.github.com/dalen/6672186.js"></script>
+
+<p>Note that this configuration is not caching the <code>file_metadatas</code> endpoint, I
+suggest you do. It also expires the cache after 300 seconds, 5m, and can grow
+up to <span class="caps">1GB</span>.</p>
+<p>I&#8217;m familiar enough with Apache to be able to tell you that this stores the
+cache in <span class="caps">RAM</span> but I have no idea how to invalidate it at deploy&nbsp;time.</p>
+  </div>
+</article>
+</div>
+
+        </div>
+        <div class='footer'>
+<p>All content on this site is licensed under the <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC Attribution-ShareAlike 4.0 International</a>        </div>
+      </div>
+    </div>
+  </body>
+</html>
