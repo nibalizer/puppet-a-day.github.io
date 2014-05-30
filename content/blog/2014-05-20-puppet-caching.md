@@ -226,6 +226,6 @@ cache in RAM but I have no idea how to invalidate it at deploy time.
 
 [kbarber]: https://github.com/kbarber "Github - Ken Barber"
 [plabs]: http://www.puppetlabs.com "Puppet Labs"
-[dalen]: https://github.com/daen "Github - Erik Dalén"
+[dalen]: https://github.com/dalen "Github - Erik Dalén"
 [spotify]: http://www.spotify.com "Spotify"
 [ngx-proxy-cache-path]: http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_path "NGINX - proxy_cache_path"
