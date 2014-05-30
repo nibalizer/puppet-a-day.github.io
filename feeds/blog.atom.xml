@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom"><title>Puppet a day</title><link href="http://puppet-a-day.com/" rel="alternate"></link><link href="http://puppet-a-day.com/feeds/blog.atom.xml" rel="self"></link><id>http://puppet-a-day.com/</id><updated>2014-05-20T00:00:00+00:00</updated><entry><title>Puppet caching</title><link href="http://puppet-a-day.com/blog/2014/05/20/puppet-caching/" rel="alternate"></link><updated>2014-05-20T00:00:00+00:00</updated><author><name>Daenney</name></author><id>tag:puppet-a-day.com,2014-05-20:blog/2014/05/20/puppet-caching/</id><summary type="html">&lt;p&gt;With Puppet 3.6 out the door and the new caching mechanisms it provides I
 started exploring how to do caching with Puppet. A thank you goes out to
-&lt;a href="https://github.com/kbarber" title="Github - Ken Barber"&gt;Ken Barber&lt;/a&gt; of &lt;a href="http://www.puppetlabs.com" title="Puppet Labs"&gt;Puppet Labs&lt;/a&gt; and &lt;a href="https://github.com/daen" title="Github - Erik Dalén"&gt;Erik Dalén&lt;/a&gt; of
+&lt;a href="https://github.com/kbarber" title="Github - Ken Barber"&gt;Ken Barber&lt;/a&gt; of &lt;a href="http://www.puppetlabs.com" title="Puppet Labs"&gt;Puppet Labs&lt;/a&gt; and &lt;a href="https://github.com/dalen" title="Github - Erik Dalén"&gt;Erik Dalén&lt;/a&gt; of
 &lt;a href="http://www.spotify.com" title="Spotify"&gt;Spotify&lt;/a&gt; for their help on this&amp;nbsp;quest.&lt;/p&gt;
 &lt;p&gt;The first thing I wanted to do is use the new caching mechanism for directory
 based environments on Puppet 3.6 in such a way that our production environment
@@ -180,7 +180,7 @@ the&amp;nbsp;cache.&lt;/p&gt;
 alter it to include &lt;code&gt;--cacert&lt;/code&gt; and point that to
 &lt;code&gt;/var/lib/puppet/ssl/certs/ca.pem&lt;/code&gt; instead.&lt;/p&gt;
 &lt;h2 id="apache-cache"&gt;Apache&amp;nbsp;cache&lt;/h2&gt;
-&lt;p&gt;The cache configuration for nginx is inspired based on what &lt;a href="https://github.com/daen" title="Github - Erik Dalén"&gt;Erik Dalén&lt;/a&gt;
+&lt;p&gt;The cache configuration for nginx is inspired based on what &lt;a href="https://github.com/dalen" title="Github - Erik Dalén"&gt;Erik Dalén&lt;/a&gt;
 has been doing at Spotify and decided to&amp;nbsp;share:&lt;/p&gt;
 &lt;script src="https://gist.github.com/dalen/6672186.js"&gt;&lt;/script&gt;
 
