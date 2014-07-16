@@ -20,7 +20,7 @@ when we deploy but between two deploys this code never ever changes.
 First order of business, turn on caching in `/etc/puppet/puppet.conf`:
 
 ```ini
-environment_cache = unlimited
+environment_timeout = unlimited
 ```
 
 Restart the Puppet master and there you go. All the `*.pp` files are now parsed
