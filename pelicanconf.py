@@ -38,7 +38,7 @@ DEFAULT_CATEGORY = 'blog'
 
 OUTPUT_PATH = 'output/'
 PATH = 'content/'
-ARTICLE_DIR = 'blog/'
+ARTICLE_PATHS = ['blog']
 ARTICLE_URL = 'blog/{date:%Y}/{date:%m}/{date:%d}/{slug}/'
 ARTICLE_SAVE_AS = 'blog/{date:%Y}/{date:%m}/{date:%d}/{slug}/index.html'
 PAGE_URL = 'pages/{slug}'
@@ -56,7 +56,7 @@ TAG_SAVE_AS = 'tag/{slug}/index.html'
 LICENSE = ('CC Attribution-ShareAlike 4.0 International',
             'http://creativecommons.org/licenses/by-sa/4.0/',
             )
-PLUGIN_PATH = 'plugins'
+PLUGIN_PATHS = ['plugins']
 PLUGINS = ['gravatar']
 STATIC_PATHS = [
     'extra/CNAME',
