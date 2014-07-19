@@ -9,7 +9,7 @@ would be cached forever. Of course we also need a way to invalidate that cache
 when we deploy but between two deploys this code never ever&amp;nbsp;changes.&lt;/p&gt;
 &lt;h2 id="directory-based-environments-cache"&gt;Directory-based environments&amp;nbsp;cache&lt;/h2&gt;
 &lt;p&gt;First order of business, turn on caching in &lt;code&gt;/etc/puppet/puppet.conf&lt;/code&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="na"&gt;environment_cache&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;unlimited&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="na"&gt;environment_timeout&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;unlimited&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 

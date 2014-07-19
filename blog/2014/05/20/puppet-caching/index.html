@@ -9,10 +9,10 @@
     <meta property="og:type" content="article"/>
     <meta property="og:title" content="Puppet caching">
     <meta property="og:url" content="http://puppet-a-day.com/blog/2014/05/20/puppet-caching/">
-    <meta property="og:description" content="Caching things with Puppet 3.6 and nginx">
+    <meta property="og:description" content="Caching things with Puppet 3.6 and nginx">
     <meta property="article:published_time" content="2014-05-20">
     <meta name="twitter:title" content="Puppet caching">
-    <meta name="twitter:description" content="Caching things with Puppet 3.6 and nginx">
+    <meta name="twitter:description" content="Caching things with Puppet 3.6 and nginx">
     <meta property="article:section" content="blog">
     <meta property="article:author" content="Daenney">
     <meta name="twitter:creator" content="@daenney">
@@ -85,7 +85,7 @@ would be cached forever. Of course we also need a way to invalidate that cache
 when we deploy but between two deploys this code never ever&nbsp;changes.</p>
 <h2 id="directory-based-environments-cache">Directory-based environments&nbsp;cache</h2>
 <p>First order of business, turn on caching in <code>/etc/puppet/puppet.conf</code>:</p>
-<div class="highlight"><pre><span class="na">environment_cache</span> <span class="o">=</span> <span class="s">unlimited</span>
+<div class="highlight"><pre><span class="na">environment_timeout</span> <span class="o">=</span> <span class="s">unlimited</span>
 </pre></div>
 
 
