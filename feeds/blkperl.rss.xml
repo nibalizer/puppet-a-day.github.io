@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Puppet a day</title><link>http://puppet-a-day.com/</link><description>crowdsourced community blog</description><atom:link href="http://puppet-a-day.com/feeds/blkperl.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 20 May 2014 00:00:00 +0000</lastBuildDate><item><title>Purging ssh_authorized_keys with Puppet</title><link>http://puppet-a-day.com/blog/2014/05/20/purging-ssh_authorized_keys-with-puppet/</link><description>&lt;p&gt;Purging &lt;span class="caps"&gt;SSH&lt;/span&gt; authorized keys used to be the number one top-voted
+&lt;a href="https://tickets.puppetlabs.com/browse/PUP-1174"&gt;ticket&lt;/a&gt; in the Puppet issue tracker. A community member
+&lt;a href="https://github.com/ffrank"&gt;Felix Frank&lt;/a&gt; has solved the issue by adding a purge_ssh_keys parameter
+to the User resource. The change was &lt;a href="https://github.com/puppetlabs/puppet/pull/2247"&gt;merged&lt;/a&gt; into the master branch in March
+2014 and was &lt;a href="https://docs.puppetlabs.com/puppet/latest/reference/release_notes.html#feature-purging-unmanaged-ssh-authorized-keys"&gt;released&lt;/a&gt; in Puppet 3.6.0 and with some additional &lt;a href="https://docs.puppetlabs.com/puppet/latest/reference/release_notes.html#fixes-to-purgesshkeys"&gt;bug fixes&lt;/a&gt; in
+Puppet&amp;nbsp;3.6.2.&lt;/p&gt;
+&lt;p&gt;Let&amp;#8217;s take at the look at the code to enable this feature. Here we have a user
+resource for the root user. All we need to do is set the purge_ssh_keys
+attribute to true and Puppet will begin removing unmanaged&amp;nbsp;keys.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="k"&gt;user&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;root&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+     &lt;span class="na"&gt;ensure&lt;/span&gt;         &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="k"&gt;present&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+     &lt;span class="na"&gt;home&lt;/span&gt;           &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;/root&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+     &lt;span class="na"&gt;uid&lt;/span&gt;            &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;0&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+     &lt;span class="na"&gt;purge_ssh_keys&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="k"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Before you enable this you will want to make sure that you have all your root
+ssh_authorized_key resources defined in your Puppet manifests. In our example,
+we have one ssh_authorized_key resource for our public root bastion key. In
+following best practices the key data is populated from a Hiera&amp;nbsp;lookup.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="k"&gt;ssh_authorized_key&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;root@bastion&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="na"&gt;ensure&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;present&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="k"&gt;user&lt;/span&gt;   &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;root&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="na"&gt;type&lt;/span&gt;   &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;ssh-rsa&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="na"&gt;key&lt;/span&gt;    &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="na"&gt;hiera&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;bastion_pub_key&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now when we run Puppet on our clients we can see unmanaged keys getting&amp;nbsp;removed.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;(&lt;/span&gt;/Stage&lt;span class="o"&gt;[&lt;/span&gt;main&lt;span class="o"&gt;]&lt;/span&gt;/site::Sysadmin/Ssh_authorized_key&lt;span class="o"&gt;[&lt;/span&gt;root@old_bastion1&lt;span class="o"&gt;]&lt;/span&gt;/ensure&lt;span class="o"&gt;)&lt;/span&gt; removed
+&lt;span class="o"&gt;(&lt;/span&gt;/Stage&lt;span class="o"&gt;[&lt;/span&gt;main&lt;span class="o"&gt;]&lt;/span&gt;/site::Sysadmin/Ssh_authorized_key&lt;span class="o"&gt;[&lt;/span&gt;root@old_bastion2&lt;span class="o"&gt;]&lt;/span&gt;/ensure&lt;span class="o"&gt;)&lt;/span&gt; removed
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;You should check /root/.ssh/authorized_keys afterwards to make sure the
+correct keys are in the file. If it looks good you can push the change 
+out to all of your&amp;nbsp;machines.&lt;/p&gt;
+&lt;p&gt;If your not yet using Puppet 3.6.2 or higher you can use the &lt;a href="https://forge.puppetlabs.com/nightfly/ssh_keys"&gt;ssh_keys&lt;/a&gt;
+Puppet module written by &lt;a href="https://github.com/nightfly19"&gt;nightfly&lt;/a&gt; which works around the issue by implementing a new resource
+with the concat module for a&amp;nbsp;backend.&lt;/p&gt;
+&lt;p&gt;Now you are all set to go deploy this in your&amp;nbsp;infrastructure. &lt;/p&gt;
+&lt;p&gt;Happy&amp;nbsp;puppeting!&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">blkperl</dc:creator><pubDate>Tue, 20 May 2014 00:00:00 +0000</pubDate><guid>tag:puppet-a-day.com,2014-05-20:blog/2014/05/20/purging-ssh_authorized_keys-with-puppet/</guid></item></channel></rss>

@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta property="og:site_name" content="Puppet a day">
+    <meta name="twitter:card" content="summary">
+    <meta property="og:type" content="article"/>
+    <meta property="og:title" content="From shell to Puppet">
+    <meta property="og:url" content="http://puppet-a-day.com/blog/2014/07/19/from-shell-to-puppet/">
+    <meta property="og:description" content="Moving from imperative scripts to declarative Puppet">
+    <meta property="article:published_time" content="2014-07-19">
+    <meta name="twitter:title" content="From shell to Puppet">
+    <meta name="twitter:description" content="Moving from imperative scripts to declarative Puppet">
+    <meta property="article:section" content="blog">
+    <meta property="article:author" content="Daenney">
+    <meta name="twitter:creator" content="@daenney">
+
+    <title>Puppet a day</title>
+
+    <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.5.0-rc-1/pure-min.css">
+    <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.5.0-rc-1/grids-responsive-min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <!--[if lt IE 9]>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="http://puppet-a-day.com/theme/css/puppet-a-day.css">
+    <link rel="stylesheet" href="http://puppet-a-day.com/theme/css/pygments.css">
+  </head>
+  <body>
+    <div id="layout" class="pure-g">
+<div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    <hgroup>
+      <h1 class="brand-title"><a href="/">Puppet a day</a></h1>
+      <h2 class="brand-tagline">crowdsourced community blog</h2>
+    </hgroup>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/archives">Archives</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/authors">Authors</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/categories">Categories</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/tags">Tags</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="https://github.com/puppet-a-day/puppet-a-day.github.io"><i class="fa fa-github"></i> Github</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>      <div class="content pure-u-1 pure-u-md-3-4">
+        <div>
+
+<div class="posts">
+  <article class="post h-entry">
+  <header class="article-header">
+    <img class="article-avatar" alt="Daenney" src="http://www.gravatar.com/avatar/5f627cc6ce7340c04d1bfd637380c271" height="56px" width="56px">
+    <h2 class="post-title">From shell to&nbsp;Puppet</h2>
+    <div class="post-meta h-card">
+      By <span class="p-name"><a class="u-url" href="/author/daenney">
+          Daenney</a></span>
+      in <a href="/category/blog"
+        class="post-category post-category-blog">
+        blog</a>
+      on <time class="dt-published" datetime="2014-07-19T00:00:00">Sat 19 July 2014</time>
+    </div>
+  </header>
+  <div class="e-content ">
+    <p>It comes up every now and then in #puppet on <span class="caps">IRC</span>. Someone comes in, usually fairly new to Puppet, and pastes the link to a Gist with a manifest they&#8217;re having trouble&nbsp;with.</p>
+<p>When you click on that link and look at it you&#8217;re usually greeted by Puppet code trying to replicate a shell script. Everything is ordered, notify/subscribes aren&#8217;t used and a ton of exec&#8217;s are in place that take care of restarting the managed services every single&nbsp;time.</p>
+<p>The problem here is two-fold; people generally don&#8217;t bother to read the documentation or the introductory material and they&#8217;re having a hard time wrapping their head around the concepts of how Puppet &#8216;orders&#8217;&nbsp;things.</p>
+<h2 id="imperative-vs-declarative">Imperative vs.&nbsp;Declarative</h2>
+<p>Bash, or any form of shell scripting, is considered to be imperative. You type in commands and those commands manipulate the state of the machine. Consider a one-line script with just the following command: <code>apt-get install git</code>. You give the machine a command to execute and the result of that command is that git is now&nbsp;available.</p>
+<p>When we&#8217;re automating infrastructure you&#8217;ll quickly run into the diversity issue. It&#8217;s probably that at some point in time you&#8217;ll need to make your scripts work with a different platform or package&nbsp;manager.</p>
+<p>Puppet takes a different approach. Instead of telling Puppet that we want to run <code>apt-get install git</code> we tell Puppet <code>make sure git is installed once you're done</code>. At this point, we&#8217;re declaring (hence the declarative nature) what state we want the machine in, not <em>how</em> to achieve that&nbsp;state.</p>
+<p>In Puppet instead we would&nbsp;say:</p>
+<div class="highlight"><pre><span class="k">package</span> <span class="p">{</span> <span class="s">&#39;git&#39;</span><span class="p">:</span>
+  <span class="na">ensure</span> <span class="o">=&gt;</span> <span class="s">&#39;installed&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>How to install <code>git</code> on the different platforms this might run on is an implementation detail left for Puppet to figure out. If you&#8217;re curious as to how this is done start looking at Types and&nbsp;Providers.</p>
+<h2 id="linear-vs-planartreegraph">Linear vs&nbsp;planar/tree/graph</h2>
+<p>In a Bash script, things execute in the precise order you&#8217;ve told them to. Write the line <code>apt-get update</code> before <code>apt-get install git</code> and you can rest assured that one command will execute before the next. There&#8217;s also a downside to this, do we still want to try and run <code>apt-get install git</code> if <code>apt-get update</code> fails?</p>
+<p>Now if we consider the following snippet in the Puppet <span class="caps">DSL</span>:</p>
+<div class="highlight"><pre><span class="k">exec</span> <span class="p">{</span> <span class="s">&#39;apt-get update&#39;</span><span class="p">:</span> <span class="p">}</span>
+
+<span class="k">package</span> <span class="p">{</span> <span class="s">&#39;git&#39;</span><span class="p">:</span>
+  <span class="na">ensure</span> <span class="o">=&gt;</span> <span class="k">installed</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>This does not mean that <code>apt-get update</code> will be run before the package <code>git</code> is to be installed. It only tells Puppet that, before it&#8217;s done, it needs to run <code>apt-get update</code> and install <code>git</code>, but not necessarily in that&nbsp;order.</p>
+<p>Though at first you&#8217;ll find this startling and confusing it&#8217;s one of the things that make Puppet so powerful. Internally Puppet constructs a graph of all the relations between resources and ensures that based on those resources things are executed in the right order. If you don&#8217;t specify an order you won&#8217;t know when something will happen but you&#8217;re guaranteed it will be done before Puppet is done&nbsp;executing.</p>
+<p>The reason this is so great is simply: you often don&#8217;t need things to happen in a particular order. Does it matter if Git is installed before Mercurial or vim before emacs? As long as they end up being installed, when in a run that happens is mostly&nbsp;irrelevant.</p>
+<p>However, there are plenty of cases where order matters. You can&#8217;t start a web server without it being installed first just like you should take care of running <code>apt-get update</code> before trying to install a package if your apt configuration has&nbsp;changed.</p>
+<h2 id="beforeafter-notifysubscribe">Before/after,&nbsp;notify/subscribe</h2>
+<p>We have two types of relations in Puppet. The first pair, before and after, only make sure that things are run in a specific order. Notify and subscribe are a bit more interesting: they imply a before/after relationship but on top of that tell Puppet something else. If resource &#8216;a&#8217; is changed, we call this refreshing in Puppet-speak, then resource &#8216;b&#8217; needs to be refreshed&nbsp;too.</p>
+<p>Our first&nbsp;example:</p>
+<div class="highlight"><pre><span class="k">package</span> <span class="p">{</span> <span class="s">&#39;apache2&#39;</span><span class="p">:</span>
+  <span class="na">ensure</span> <span class="o">=&gt;</span> <span class="s">&#39;latest&#39;</span><span class="p">,</span>
+  <span class="k">before</span> <span class="o">=&gt;</span> <span class="k">Service</span><span class="p">[</span><span class="s">&#39;apache2&#39;</span><span class="p">],</span>
+<span class="p">}</span>
+
+<span class="k">service</span> <span class="p">{</span> <span class="s">&#39;apache2&#39;</span><span class="p">:</span>
+  <span class="na">ensure</span> <span class="o">=&gt;</span> <span class="s">&#39;running&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Now what we&#8217;re telling Puppet&nbsp;is:</p>
+<ul>
+<li>We want Apache installed and whenever you run check that it is the latest available version is installed (this will cause Puppet to upgrade Apache for&nbsp;you);</li>
+<li>Make sure we&#8217;re installed before you try to manage the apache&nbsp;service;</li>
+<li>Manage the apache service and ensure that it is running (this will start the daemon if it is not&nbsp;running).</li>
+</ul>
+<p>The following snippet achieves the exact same&nbsp;thing:</p>
+<div class="highlight"><pre><span class="k">package</span> <span class="p">{</span> <span class="s">&#39;apache2&#39;</span><span class="p">:</span>
+  <span class="na">ensure</span> <span class="o">=&gt;</span> <span class="s">&#39;latest&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">service</span> <span class="p">{</span> <span class="s">&#39;apache2&#39;</span><span class="p">:</span>
+  <span class="na">ensure</span> <span class="o">=&gt;</span> <span class="s">&#39;running&#39;</span><span class="p">,</span>
+  <span class="na">after</span>  <span class="o">=&gt;</span> <span class="k">Package</span><span class="p">[</span><span class="s">&#39;apache2&#39;</span><span class="p">],</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>This is telling&nbsp;Puppet</p>
+<ul>
+<li>We want Apache installed and whenever you run check that it is the latest available version is installed (this will cause Puppet to upgrade Apache for&nbsp;you);</li>
+<li>Manage the apache service and ensure that it is running (this will start the daemon if it is not&nbsp;running);</li>
+<li>We can only manage the apache service after the package apache is&nbsp;installed.</li>
+</ul>
+<p>However, consider what happens when the &#8216;apache2&#8217; package gets updated. Though the package is updated Puppet has no way to know this has happened so it can&#8217;t restart the apache service for us in order to ensure we&#8217;re running our newly patched&nbsp;code.</p>
+<p>Propagating this need to &#8216;refresh&#8217; based on the fact that another resource &#8216;refreshed&#8217; is done by&nbsp;notify/subscribe.</p>
+<div class="highlight"><pre><span class="k">package</span> <span class="p">{</span> <span class="s">&#39;apache2&#39;</span><span class="p">:</span>
+  <span class="na">ensure</span> <span class="o">=&gt;</span> <span class="s">&#39;latest&#39;</span><span class="p">,</span>
+  <span class="k">notify</span> <span class="o">=&gt;</span> <span class="k">Service</span><span class="p">[</span><span class="s">&#39;apache2&#39;</span><span class="p">],</span>
+<span class="p">}</span>
+
+<span class="k">service</span> <span class="p">{</span> <span class="s">&#39;apache2&#39;</span><span class="p">:</span>
+  <span class="na">ensure</span> <span class="o">=&gt;</span> <span class="s">&#39;running&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>As you might have guessed, we&#8217;re now not only telling Puppet that the package apache2 needs to be installed before we can manage the apache2 service but we&#8217;re also telling Puppet that we should inform the apache2 service if the state of the package resource changes. This in turn will allow Puppet to restart the apache2&nbsp;service.</p>
+<p>Subscribe is to notify what after is to before, so you can remove the <code>notify</code> from the package and add a <code>subscribe</code> to the service for the&nbsp;package:</p>
+<div class="highlight"><pre><span class="k">package</span> <span class="p">{</span> <span class="s">&#39;apache2&#39;</span><span class="p">:</span>
+  <span class="na">ensure</span> <span class="o">=&gt;</span> <span class="s">&#39;latest&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">service</span> <span class="p">{</span> <span class="s">&#39;apache2&#39;</span><span class="p">:</span>
+  <span class="na">ensure</span>    <span class="o">=&gt;</span> <span class="s">&#39;running&#39;</span><span class="p">,</span>
+  <span class="k">subscribe</span> <span class="o">=&gt;</span> <span class="k">Service</span><span class="p">[</span><span class="s">&#39;apache2&#39;</span><span class="p">],</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>All this has an added bonus, if the package apache2 fails to install Puppet will not try to start the apache2 service because it is aware that something went wrong with one of the resources it depends&nbsp;on.</p>
+<h2 id="relationships-are-hard">Relationships are&nbsp;hard</h2>
+<p>It will probably take you a while to get your head around relationships in Puppet, when you need them and when you&nbsp;don&#8217;t.</p>
+<p>The thing to ask yourself is: &#8220;Do I care when this happens?&#8221; Quite often you&#8217;ll find out that the answer is &#8220;no, as long as it happens&#8221; in which case Puppet will do the right thing for you by&nbsp;default.</p>
+<p>If you do care when this happens, think carefully on the type of relationship you need. &#8220;Do I just need things to execute in a specific order or do I need these parts to be aware of changes to one another?&#8221; and chose a before/after or notify/subscribe relation&nbsp;accordingly.</p>
+<p>One last thing to remember, when you notify from a to b you do not need to subscribe from b to a and the same thing applies to&nbsp;before/after.</p>
+  </div>
+</article>
+</div>
+
+        </div>
+        <div class='footer'>
+<p>All content on this site is licensed under the <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC Attribution-ShareAlike 4.0 International</a>        </div>
+      </div>
+    </div>
+  </body>
+</html>

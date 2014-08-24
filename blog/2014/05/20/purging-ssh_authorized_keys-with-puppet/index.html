@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta property="og:site_name" content="Puppet a day">
+    <meta name="twitter:card" content="summary">
+    <meta property="og:type" content="article"/>
+    <meta property="og:title" content="Purging ssh_authorized_keys with Puppet">
+    <meta property="og:url" content="http://puppet-a-day.com/blog/2014/05/20/purging-ssh_authorized_keys-with-puppet/">
+    <meta property="og:description" content="How to purge unmanaged SSH authorized keys with Puppet">
+    <meta property="article:published_time" content="2014-05-20">
+    <meta name="twitter:title" content="Purging ssh_authorized_keys with Puppet">
+    <meta name="twitter:description" content="How to purge unmanaged SSH authorized keys with Puppet">
+    <meta property="article:section" content="blog">
+    <meta property="article:author" content="blkperl">
+    <meta name="twitter:creator" content="@pdx_blkperl">
+
+    <title>Puppet a day</title>
+
+    <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.5.0-rc-1/pure-min.css">
+    <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.5.0-rc-1/grids-responsive-min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <!--[if lt IE 9]>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="http://puppet-a-day.com/theme/css/puppet-a-day.css">
+    <link rel="stylesheet" href="http://puppet-a-day.com/theme/css/pygments.css">
+  </head>
+  <body>
+    <div id="layout" class="pure-g">
+<div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    <hgroup>
+      <h1 class="brand-title"><a href="/">Puppet a day</a></h1>
+      <h2 class="brand-tagline">crowdsourced community blog</h2>
+    </hgroup>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/archives">Archives</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/authors">Authors</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/categories">Categories</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="http://puppet-a-day.com/tags">Tags</a>
+        </li>
+        <li class="nav-item">
+          <a class="pure-button" href="https://github.com/puppet-a-day/puppet-a-day.github.io"><i class="fa fa-github"></i> Github</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>      <div class="content pure-u-1 pure-u-md-3-4">
+        <div>
+
+<div class="posts">
+  <article class="post h-entry">
+  <header class="article-header">
+    <img class="article-avatar" alt="blkperl" src="http://www.gravatar.com/avatar/a2569e6f58b28cbf66fffd349d1b3959" height="56px" width="56px">
+    <h2 class="post-title">Purging ssh_authorized_keys with&nbsp;Puppet</h2>
+    <div class="post-meta h-card">
+      By <span class="p-name"><a class="u-url" href="/author/blkperl">
+          blkperl</a></span>
+      in <a href="/category/blog"
+        class="post-category post-category-blog">
+        blog</a>
+      on <time class="dt-published" datetime="2014-05-20T00:00:00">Tue 20 May 2014</time>
+    </div>
+  </header>
+  <div class="e-content ">
+    <p>Purging <span class="caps">SSH</span> authorized keys used to be the number one top-voted
+<a href="https://tickets.puppetlabs.com/browse/PUP-1174">ticket</a> in the Puppet issue tracker. A community member
+<a href="https://github.com/ffrank">Felix Frank</a> has solved the issue by adding a purge_ssh_keys parameter
+to the User resource. The change was <a href="https://github.com/puppetlabs/puppet/pull/2247">merged</a> into the master branch in March
+2014 and was <a href="https://docs.puppetlabs.com/puppet/latest/reference/release_notes.html#feature-purging-unmanaged-ssh-authorized-keys">released</a> in Puppet 3.6.0 and with some additional <a href="https://docs.puppetlabs.com/puppet/latest/reference/release_notes.html#fixes-to-purgesshkeys">bug fixes</a> in
+Puppet&nbsp;3.6.2.</p>
+<p>Let&#8217;s take at the look at the code to enable this feature. Here we have a user
+resource for the root user. All we need to do is set the purge_ssh_keys
+attribute to true and Puppet will begin removing unmanaged&nbsp;keys.</p>
+<div class="highlight"><pre>    <span class="k">user</span> <span class="p">{</span> <span class="s">&#39;root&#39;</span><span class="p">:</span>
+     <span class="na">ensure</span>         <span class="o">=&gt;</span> <span class="k">present</span><span class="p">,</span>
+     <span class="na">home</span>           <span class="o">=&gt;</span> <span class="s">&#39;/root&#39;</span><span class="p">,</span>
+     <span class="na">uid</span>            <span class="o">=&gt;</span> <span class="s">&#39;0&#39;</span><span class="p">,</span>
+     <span class="na">purge_ssh_keys</span> <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span>
+    <span class="p">}</span>
+</pre></div>
+
+
+<p>Before you enable this you will want to make sure that you have all your root
+ssh_authorized_key resources defined in your Puppet manifests. In our example,
+we have one ssh_authorized_key resource for our public root bastion key. In
+following best practices the key data is populated from a Hiera&nbsp;lookup.</p>
+<div class="highlight"><pre>    <span class="k">ssh_authorized_key</span> <span class="p">{</span> <span class="s">&#39;root@bastion&#39;</span><span class="p">:</span>
+      <span class="na">ensure</span> <span class="o">=&gt;</span> <span class="s">&#39;present&#39;</span><span class="p">,</span>
+      <span class="k">user</span>   <span class="o">=&gt;</span> <span class="s">&#39;root&#39;</span><span class="p">,</span>
+      <span class="na">type</span>   <span class="o">=&gt;</span> <span class="s">&#39;ssh-rsa&#39;</span><span class="p">,</span>
+      <span class="na">key</span>    <span class="o">=&gt;</span> <span class="na">hiera</span><span class="p">(</span><span class="s">&#39;bastion_pub_key&#39;</span><span class="p">)</span>
+    <span class="p">}</span>
+</pre></div>
+
+
+<p>Now when we run Puppet on our clients we can see unmanaged keys getting&nbsp;removed.</p>
+<div class="highlight"><pre><span class="o">(</span>/Stage<span class="o">[</span>main<span class="o">]</span>/site::Sysadmin/Ssh_authorized_key<span class="o">[</span>root@old_bastion1<span class="o">]</span>/ensure<span class="o">)</span> removed
+<span class="o">(</span>/Stage<span class="o">[</span>main<span class="o">]</span>/site::Sysadmin/Ssh_authorized_key<span class="o">[</span>root@old_bastion2<span class="o">]</span>/ensure<span class="o">)</span> removed
+</pre></div>
+
+
+<p>You should check /root/.ssh/authorized_keys afterwards to make sure the
+correct keys are in the file. If it looks good you can push the change 
+out to all of your&nbsp;machines.</p>
+<p>If your not yet using Puppet 3.6.2 or higher you can use the <a href="https://forge.puppetlabs.com/nightfly/ssh_keys">ssh_keys</a>
+Puppet module written by <a href="https://github.com/nightfly19">nightfly</a> which works around the issue by implementing a new resource
+with the concat module for a&nbsp;backend.</p>
+<p>Now you are all set to go deploy this in your&nbsp;infrastructure. </p>
+<p>Happy&nbsp;puppeting!</p>
+  </div>
+</article>
+</div>
+
+        </div>
+        <div class='footer'>
+<p>All content on this site is licensed under the <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC Attribution-ShareAlike 4.0 International</a>        </div>
+      </div>
+    </div>
+  </body>
+</html>
