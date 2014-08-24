@@ -2,7 +2,7 @@ title: Purging ssh_authorized_keys with Puppet
 author: blkperl
 twitter_handle: @pdx_blkperl
 email: blkperl@cat.pdx.edu
-date: 2014-05-20
+date: 2014-08-24
 summary: How to purge unmanaged SSH authorized keys with Puppet
 
 Purging SSH authorized keys used to be the number one top-voted
