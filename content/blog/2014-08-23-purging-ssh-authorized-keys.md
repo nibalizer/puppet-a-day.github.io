@@ -50,11 +50,11 @@ You should check /root/.ssh/authorized_keys afterwards to make sure the
 correct keys are in the file. If it looks good you can push the change 
 out to all of your machines.
 
-If your not yet using Puppet 3.6.2 or higher you can use the [ssh_keys][ssh_keys]
+If you're not yet using Puppet 3.6.2 or higher you can use the [ssh_keys][ssh_keys]
 Puppet module written by [nightfly][nightfly] which works around the issue by implementing a new resource
 with the concat module for a backend.
 
-Now you are all set to go deploy this in your infrastructure. 
+Now you are all set to go deploy this in your infrastructure.
 
 Happy puppeting!
 
