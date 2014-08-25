@@ -39,8 +39,8 @@ following best practices the key data is populated from a Hiera&amp;nbsp;lookup.
 &lt;p&gt;You should check /root/.ssh/authorized_keys afterwards to make sure the
 correct keys are in the file. If it looks good you can push the change 
 out to all of your&amp;nbsp;machines.&lt;/p&gt;
-&lt;p&gt;If your not yet using Puppet 3.6.2 or higher you can use the &lt;a href="https://forge.puppetlabs.com/nightfly/ssh_keys"&gt;ssh_keys&lt;/a&gt;
+&lt;p&gt;If you&amp;#8217;re not yet using Puppet 3.6.2 or higher you can use the &lt;a href="https://forge.puppetlabs.com/nightfly/ssh_keys"&gt;ssh_keys&lt;/a&gt;
 Puppet module written by &lt;a href="https://github.com/nightfly19"&gt;nightfly&lt;/a&gt; which works around the issue by implementing a new resource
 with the concat module for a&amp;nbsp;backend.&lt;/p&gt;
-&lt;p&gt;Now you are all set to go deploy this in your&amp;nbsp;infrastructure. &lt;/p&gt;
+&lt;p&gt;Now you are all set to go deploy this in your&amp;nbsp;infrastructure.&lt;/p&gt;
 &lt;p&gt;Happy&amp;nbsp;puppeting!&lt;/p&gt;</summary></entry></feed>

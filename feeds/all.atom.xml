@@ -39,10 +39,10 @@ following best practices the key data is populated from a Hiera&amp;nbsp;lookup.
 &lt;p&gt;You should check /root/.ssh/authorized_keys afterwards to make sure the
 correct keys are in the file. If it looks good you can push the change 
 out to all of your&amp;nbsp;machines.&lt;/p&gt;
-&lt;p&gt;If your not yet using Puppet 3.6.2 or higher you can use the &lt;a href="https://forge.puppetlabs.com/nightfly/ssh_keys"&gt;ssh_keys&lt;/a&gt;
+&lt;p&gt;If you&amp;#8217;re not yet using Puppet 3.6.2 or higher you can use the &lt;a href="https://forge.puppetlabs.com/nightfly/ssh_keys"&gt;ssh_keys&lt;/a&gt;
 Puppet module written by &lt;a href="https://github.com/nightfly19"&gt;nightfly&lt;/a&gt; which works around the issue by implementing a new resource
 with the concat module for a&amp;nbsp;backend.&lt;/p&gt;
-&lt;p&gt;Now you are all set to go deploy this in your&amp;nbsp;infrastructure. &lt;/p&gt;
+&lt;p&gt;Now you are all set to go deploy this in your&amp;nbsp;infrastructure.&lt;/p&gt;
 &lt;p&gt;Happy&amp;nbsp;puppeting!&lt;/p&gt;</summary></entry><entry><title>From shell to Puppet</title><link href="http://puppet-a-day.com/blog/2014/07/19/from-shell-to-puppet/" rel="alternate"></link><updated>2014-07-19T00:00:00+00:00</updated><author><name>Daenney</name></author><id>tag:puppet-a-day.com,2014-07-19:blog/2014/07/19/from-shell-to-puppet/</id><summary type="html">&lt;p&gt;It comes up every now and then in #puppet on &lt;span class="caps"&gt;IRC&lt;/span&gt;. Someone comes in, usually fairly new to Puppet, and pastes the link to a Gist with a manifest they&amp;#8217;re having trouble&amp;nbsp;with.&lt;/p&gt;
 &lt;p&gt;When you click on that link and look at it you&amp;#8217;re usually greeted by Puppet code trying to replicate a shell script. Everything is ordered, notify/subscribes aren&amp;#8217;t used and a ton of exec&amp;#8217;s are in place that take care of restarting the managed services every single&amp;nbsp;time.&lt;/p&gt;
 &lt;p&gt;The problem here is two-fold; people generally don&amp;#8217;t bother to read the documentation or the introductory material and they&amp;#8217;re having a hard time wrapping their head around the concepts of how Puppet &amp;#8216;orders&amp;#8217;&amp;nbsp;things.&lt;/p&gt;
